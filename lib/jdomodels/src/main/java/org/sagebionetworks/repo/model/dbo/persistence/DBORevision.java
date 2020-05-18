@@ -16,26 +16,18 @@ import static org.sagebionetworks.repo.model.query.jdo.SqlConstants.COL_REVISION
 import static org.sagebionetworks.repo.model.query.jdo.SqlConstants.DDL_FILE_REVISION;
 import static org.sagebionetworks.repo.model.query.jdo.SqlConstants.TABLE_REVISION;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import org.sagebionetworks.repo.model.annotation.v2.Annotations;
-import org.sagebionetworks.repo.model.annotation.v2.AnnotationsV2Translator;
-import org.sagebionetworks.repo.model.annotation.v2.AnnotationsV2Utils;
-import org.sagebionetworks.repo.model.annotation.v2.TEMPORARYMigrationAnnotations;
 import org.sagebionetworks.repo.model.dbo.FieldColumn;
 import org.sagebionetworks.repo.model.dbo.MigratableDatabaseObject;
 import org.sagebionetworks.repo.model.dbo.TableMapping;
 import org.sagebionetworks.repo.model.dbo.migration.BasicMigratableTableTranslation;
 import org.sagebionetworks.repo.model.dbo.migration.MigratableTableTranslation;
-import org.sagebionetworks.repo.model.jdo.AnnotationUtils;
 import org.sagebionetworks.repo.model.migration.MigrationType;
-import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
-import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 
 /**
  * The DatabaseObject for Revision.
@@ -46,31 +38,7 @@ import org.sagebionetworks.schema.adapter.org.json.EntityFactory;
 public class DBORevision implements MigratableDatabaseObject<DBORevision, DBORevision> {
 	public static final int MAX_COMMENT_LENGTH = 256;
 
-	static final MigratableTableTranslation<DBORevision, DBORevision> TRANSLATOR = new BasicMigratableTableTranslation<DBORevision>() {
-		@Override
-		public DBORevision createDatabaseObjectFromBackup(DBORevision backup){
-			if (backup.getUserAnnotationsJSON() != null){
-				try {
-					TEMPORARYMigrationAnnotations migrationAnnotations;
-					try {
-						migrationAnnotations = EntityFactory.createEntityFromJSONString(backup.getUserAnnotationsJSON(), TEMPORARYMigrationAnnotations.class);
-					} catch (JSONObjectAdapterException e){
-						//already in a different format. Ignore.
-						return backup;
-					}
-
-					Annotations annotationsV2 = new Annotations();
-					annotationsV2.setAnnotations(migrationAnnotations.getAnnotations());
-
-					backup.setUserAnnotationsJSON(AnnotationsV2Utils.toJSONStringForStorage(annotationsV2));
-				} catch (JSONObjectAdapterException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-			return backup;
-		}
-	};
+	static final MigratableTableTranslation<DBORevision, DBORevision> TRANSLATOR = new BasicMigratableTableTranslation<DBORevision>();
 	
 	private static FieldColumn[] FIELDS = new FieldColumn[] {
 		// This is a sub-table of node, so it gets backed up with nodes using the node ids

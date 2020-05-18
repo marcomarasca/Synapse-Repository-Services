@@ -150,6 +150,8 @@
 				<bean class="org.sagebionetworks.repo.model.dbo.ses.DBOSESNotification" />
 				<!-- Email Quarantine -->
 				<bean class="org.sagebionetworks.repo.model.dbo.ses.DBOQuarantinedEmail" />
+				<!-- Annotations -->
+				<bean class="org.sagebionetworks.repo.model.dbo.annotations.DBOAnnotations" />
 			</list>
 		</property>
 		<!-- MySQL Functions to be created/updated -->
@@ -260,6 +262,9 @@
 		
 				<!-- Email Quarantine -->
 				<bean class="org.sagebionetworks.repo.model.dbo.ses.DBOQuarantinedEmail" />
+				
+				<!-- Annotations -->
+				<bean class="org.sagebionetworks.repo.model.dbo.annotations.DBOAnnotations" />
 		
 				<bean class="org.sagebionetworks.repo.model.dbo.persistence.DBOChange" /> <!-- THIS MUST ALWAYS BE THE LAST BEAN -->
 			</list>

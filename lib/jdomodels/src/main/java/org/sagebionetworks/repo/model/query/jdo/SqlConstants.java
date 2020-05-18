@@ -353,9 +353,7 @@ public class SqlConstants {
 	// The width of the string annotations value column
 	public static final int STRING_ANNOTATIONS_VALUE_LENGTH = 500;
 	
-	public static final String COL_OWNER_TYPE	 			= "OWNER_TYPE";	
-	
-	public static final String TABLE_ANNOTATION_TYPE		= "ANNOTATION_TYPE";
+	public static final String COL_OWNER_TYPE	 			= "OWNER_TYPE";
 
 	public static final String TABLE_USER					= "JDOUSER";
 	public static final String TABLE_USER_GROUP				= "JDOUSERGROUP";
@@ -1080,7 +1078,17 @@ public class SqlConstants {
 	public static final String COL_QUARANTINED_EMAILS_REASON_DETAILS =					"REASON_DETAILS";
 	public static final String COL_QUARANTINED_EMAILS_SES_MESSAGE_ID = 					"SES_MESSAGE_ID";
 	
-	
+	// Table constants related to object annotations
+	public static final String TABLE_ANNOTATIONS =										"ANNOTATIONS";
+	public static final String DDL_ANNOTATIONS =										"schema/annotations/Annotations-ddl.sql";
+	public static final String COL_ANNOTATIONS_ID =										"ID";
+	public static final String COL_ANNOTATIONS_ETAG =									"ETAG";
+	public static final String COL_ANNOTATIONS_CREATED_ON =								"CREATED_ON";
+	public static final String COL_ANNOTATIONS_MODIFIED_ON =							"MODIFIED_ON";
+	public static final String COL_ANNOTATIONS_OBJECT_TYPE =							"OBJECT_TYPE";
+	public static final String COL_ANNOTATIONS_OBJECT_ID =								"OBJECT_ID";
+	public static final String COL_ANNOTATIONS_OBJECT_VERSION =							"OBJECT_VERSION";
+	public static final String COL_ANNOTATIONS_OBJECT_ANNOTATIONS =						"OBJECT_ANNOTATIONS";
 
 	// This seems to be the name of the id column for all tables.
 	public static final String COLUMN_ID		= "id";

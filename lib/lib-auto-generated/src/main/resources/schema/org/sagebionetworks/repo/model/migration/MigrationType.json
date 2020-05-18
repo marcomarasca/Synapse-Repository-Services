@@ -383,6 +383,10 @@
 			"description": "Email addresses that are quarantined and emails are not sent to"
 		},
 		{
+			"name": "ANNOTATIONS",
+			"description": "Annotations that can be attached to objects"
+		},
+		{
 			"name": "CHANGE",
 			"description": "TODO: Auto-generated description"
 		}

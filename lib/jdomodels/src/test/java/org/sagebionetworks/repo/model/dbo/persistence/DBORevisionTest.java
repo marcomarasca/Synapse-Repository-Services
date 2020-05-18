@@ -29,7 +29,6 @@ import org.sagebionetworks.repo.model.Reference;
 import org.sagebionetworks.repo.model.annotation.v2.Annotations;
 import org.sagebionetworks.repo.model.annotation.v2.AnnotationsValue;
 import org.sagebionetworks.repo.model.annotation.v2.AnnotationsValueType;
-import org.sagebionetworks.repo.model.annotation.v2.TEMPORARYMigrationAnnotations;
 import org.sagebionetworks.repo.model.dbo.DBOBasicDao;
 import org.sagebionetworks.repo.model.dbo.dao.NodeUtils;
 import org.sagebionetworks.repo.model.dbo.migration.MigratableTableTranslation;
@@ -116,41 +115,6 @@ public class DBORevisionTest {
 		// Fetch the updated
 		DBORevision updatedClone = dboBasicDao.getObjectByPrimaryKey(DBORevision.class, params);
 		assertEquals(clone, updatedClone);
-	}
-
-	@Test
-	public void testUserAnnotationTranslator() throws IOException, JSONObjectAdapterException {
-		//create a new DBORevision just to get the translator. Since getTranslator is not static, this ensures that
-		// the translator is modifying passed in params instead of the fields of the DBORevision object that created it
-		MigratableTableTranslation<DBORevision,DBORevision> translator = new DBORevision().getTranslator();
-
-
-		TEMPORARYMigrationAnnotations migrationAnnotations = new TEMPORARYMigrationAnnotations();
-		migrationAnnotations.setAnnotations(new HashMap<>());
-		AnnotationsValue val1 = new AnnotationsValue();
-		val1.setType(AnnotationsValueType.DOUBLE);
-		val1.setValue(Collections.singletonList("1.2"));
-		migrationAnnotations.getAnnotations().put("anno1", val1);
-
-		DBORevision revision = new DBORevision();
-
-		String originalJSON = EntityFactory.createJSONStringForEntity(migrationAnnotations);
-		revision.setUserAnnotationsJSON(originalJSON);
-
-
-		DBORevision modified = translator.createDatabaseObjectFromBackup(revision);
-		String modifiedJSON = modified.getUserAnnotationsJSON();
-
-		assertNotEquals(originalJSON, modifiedJSON);
-		//should be same reference as translator only modified fields
-		assertSame(revision, modified);
-		assertNull(modified.getUserAnnotationsV1());
-
-		assertNull(modified.getUserAnnotationsV1());
-		assertNotNull(modified.getUserAnnotationsJSON());
-
-		Annotations newJsonFormatAnnotations = EntityFactory.createEntityFromJSONString(modified.getUserAnnotationsJSON(), Annotations.class);
-		assertEquals(migrationAnnotations.getAnnotations(), newJsonFormatAnnotations.getAnnotations());
 	}
 
 	@Test

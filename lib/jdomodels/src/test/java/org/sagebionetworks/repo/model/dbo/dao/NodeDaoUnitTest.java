@@ -32,6 +32,7 @@ import org.sagebionetworks.repo.model.EntityType;
 import org.sagebionetworks.repo.model.Node;
 import org.sagebionetworks.repo.model.ObjectType;
 import org.sagebionetworks.repo.model.dbo.DBOBasicDao;
+import org.sagebionetworks.repo.model.dbo.annotations.AnnotationsDao;
 import org.sagebionetworks.repo.model.message.ChangeType;
 import org.sagebionetworks.repo.model.message.MessageToSend;
 import org.sagebionetworks.repo.model.message.TransactionalMessenger;
@@ -55,6 +56,9 @@ public class NodeDaoUnitTest {
 
 	@Mock
 	private DBOBasicDao mockDboBasicDao;
+	
+	@Mock
+	private AnnotationsDao mockAnnotationsDao;
 	
 	@InjectMocks
 	private NodeDAOImpl nodeDao;

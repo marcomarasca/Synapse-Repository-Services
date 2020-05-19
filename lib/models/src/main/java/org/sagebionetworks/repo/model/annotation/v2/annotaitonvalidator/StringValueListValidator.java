@@ -24,7 +24,7 @@ class StringValueListValidator implements AnnotationsV2ValueListValidator {
 
 			totalCharacters += value.length();
 			if (totalCharacters > MAX_STRING_SIZE){
-				throw new IllegalArgumentException("Total Stri value too long. Can be at most " + MAX_STRING_SIZE + " characters.");
+				throw new IllegalArgumentException("Total String value too long. Can be at most " + MAX_STRING_SIZE + " characters.");
 			}
 		}
 	}

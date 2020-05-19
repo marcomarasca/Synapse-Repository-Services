@@ -75,6 +75,7 @@ import org.sagebionetworks.repo.model.annotation.v2.AnnotationsV2Utils;
 import org.sagebionetworks.repo.model.annotation.v2.AnnotationsValueType;
 import org.sagebionetworks.repo.model.dao.FileHandleDao;
 import org.sagebionetworks.repo.model.dbo.DBOBasicDao;
+import org.sagebionetworks.repo.model.dbo.annotations.AnnotationsDao;
 import org.sagebionetworks.repo.model.dbo.migration.MigratableTableDAO;
 import org.sagebionetworks.repo.model.dbo.persistence.DBONode;
 import org.sagebionetworks.repo.model.dbo.persistence.DBORevision;
@@ -146,6 +147,9 @@ public class NodeDAOImplTest {
 
 	@Autowired
 	private DBOBasicDao basicDao;
+	
+	@Autowired
+	private AnnotationsDao annotationsDao;
 
 	// the datasets that must be deleted at the end of each test.
 	List<String> toDelete = new ArrayList<String>();
@@ -207,6 +211,8 @@ public class NodeDAOImplTest {
 
 		groupMembersDAO.addMembers(group, Lists.newArrayList(user1));
 		groupMembersDAO.addMembers(group, Lists.newArrayList(user3));
+		
+		annotationsDao.truncateAll();
 	}
 	
 	@AfterEach
@@ -237,6 +243,8 @@ public class NodeDAOImplTest {
 		for (String todelete : Lists.reverse(userGroupsToDelete)) {
 			userGroupDAO.delete(todelete);
 		}
+		
+		annotationsDao.truncateAll();
 	}
 	
 	private Node privateCreateNew(String name) {
@@ -1046,7 +1054,7 @@ public class NodeDAOImplTest {
 		AnnotationsV2TestUtils.putAnnotations(annos, "string", "value", AnnotationsValueType.STRING);
 		AnnotationsV2TestUtils.putAnnotations(annos, "date", "1", AnnotationsValueType.TIMESTAMP_MS);
 		AnnotationsV2TestUtils.putAnnotations(annos, "double", "2.3", AnnotationsValueType.DOUBLE);
-		AnnotationsV2TestUtils.putAnnotations(annos, "long", "56l", AnnotationsValueType.LONG);
+		AnnotationsV2TestUtils.putAnnotations(annos, "long", "56", AnnotationsValueType.LONG);
 		// Update the annotations
 		nodeDao.updateUserAnnotations(id, annos);
 		// Now create a new version
@@ -2031,39 +2039,6 @@ public class NodeDAOImplTest {
 		// Get the (rolled back) node and check that the reference have been reverted
 		node = nodeDao.getNode(parentid);
 		assertEquals(node.getReference(), ref);
-	}
-	
-	@Test
-	public void testForPLFM_791() throws Exception {
-		// In the past annotations, were persisted in the annotations tables.  So when we had large strings we had to store
-		// the values as BLOB annotations.  This is no longer the case.  Now all annotations are not persisted as a single 
-		// zipped blob on the revision table.  Therefore, we only use the annotations tables for query.  This means there 
-		// is no need to have a blob annotations table anymore.  There is no need to store very large strings in the
-		// string annotations table since it does not make sense to query for large strings.
-		// This test ensures that we can have giant string annotations without any problems.
-		//make a parent project
-		Node node = privateCreateNew("testForPLFM_791");
-		node.setNodeType(EntityType.project);
-		String projectId = nodeDao.createNew(node);
-		toDelete.add(projectId);
-		assertNotNull(projectId);
-		// Now get the annotations of the entity
-		Annotations annos = nodeDao.getUserAnnotations(projectId);
-		assertNotNull(annos);
-		// Create a very large string
-		byte[] largeArray = new byte[10000];
-		byte value = 101;
-		Arrays.fill(largeArray, value);
-		String largeString = new String(largeArray, "UTF-8");
-		String key = "veryLargeString";
-		AnnotationsV2TestUtils.putAnnotations(annos, key, largeString, AnnotationsValueType.STRING);
-		// This update will fail before PLFM-791 is fixed.
-		nodeDao.updateUserAnnotations(projectId, annos);
-		// Get the values back
-		annos = nodeDao.getUserAnnotations(projectId);
-		assertNotNull(annos);
-		// Make sure we can still get the string
-		assertEquals(largeString, AnnotationsV2Utils.getSingleValue(annos, key));
 	}
 	
 	@Test
@@ -3069,42 +3044,6 @@ public class NodeDAOImplTest {
 		assertEquals(null, projectDto.getFileHandleId());
 		assertEquals(null, projectDto.getAnnotations());
 		assertEquals(null, projectDto.getFileHandleId());
-	}
-	
-	@Test
-	public void testGetEntityDTOsNullValues(){
-		Node project = NodeTestUtils.createNew("project", creatorUserGroupId);
-		project.setNodeType(EntityType.project);
-		project = nodeDao.createNewNode(project);
-		toDelete.add(project.getId());
-		
-		Node file = NodeTestUtils.createNew("folder", creatorUserGroupId);
-		file.setNodeType(EntityType.file);
-		file.setParentId(project.getId());
-		file.setFileHandleId(fileHandle.getId());
-		file = nodeDao.createNewNode(file);
-		long fileIdLong = KeyFactory.stringToKey(file.getId());
-		toDelete.add(file.getId());
-		Annotations annos = new Annotations();
-		annos.setId(file.getId());
-		annos.setEtag(file.getETag());
-		// added for PLFM_4184
-		AnnotationsV2TestUtils.putAnnotations(annos,"emptyList", Collections.emptyList(), AnnotationsValueType.STRING);
-		// added for PLFM-4224
-		AnnotationsV2TestUtils.putAnnotations(annos, "listWithNullValue", Collections.singletonList(null), AnnotationsValueType.DOUBLE);
-		nodeDao.updateUserAnnotations(file.getId(), annos);
-		
-		int maxAnnotationChars = 10;
-		
-		List<Long> ids = KeyFactory.stringToKey(ImmutableList.of(project.getId(), file.getId()));
-		// call under test
-		List<ObjectDataDTO> results = nodeDao.getEntityDTOs(ids, maxAnnotationChars);
-		assertNotNull(results);
-		assertEquals(2, results.size());
-		ObjectDataDTO fileDto = results.get(1);
-		assertEquals(KeyFactory.stringToKey(file.getId()), fileDto.getId());
-		assertNotNull(fileDto.getAnnotations());
-		assertEquals(0, fileDto.getAnnotations().size());
 	}
 	
 

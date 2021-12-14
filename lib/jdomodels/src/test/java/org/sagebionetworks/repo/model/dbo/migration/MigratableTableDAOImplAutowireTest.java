@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -432,6 +433,29 @@ public class MigratableTableDAOImplAutowireTest {
 		two.setPassHash("updatedHash2");
 		ids = migratableTableDAO.createOrUpdate(type, batch);
 		assertNotNull(ids);
+	}
+	
+	@Test
+	public void testCreateOrUpdateBigBatch() {
+		long startId = 100;
+		int count = 10_000;
+		
+		List<DatabaseObject<?>> batch = new ArrayList<>(count);
+		
+		for (int i=0; i<count; i++) {
+			DBOCredential item = new DBOCredential();
+			item.setPassHash("hash1");
+			item.setPrincipalId(startId + i);
+			item.setSecretKey("secrete1");
+			batch.add(item);
+		}
+		
+		MigrationType type = MigrationType.CREDENTIAL;
+		List<Long> ids = migratableTableDAO.createOrUpdate(type, batch);
+		assertNotNull(ids);
+		assertEquals(batch.size(), ids.size());
+		
+		migratableTableDAO.deleteByRange(migratableTableDAO.getTypeData(MigrationType.CREDENTIAL), startId, startId + count);
 	}
 	
 	@Test

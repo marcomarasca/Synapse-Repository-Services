@@ -225,6 +225,11 @@ public class StackConfigurationImpl implements StackConfiguration {
 		// Last try the stack configuration
 		return configuration.getProperty("org.sagebionetworks.repository.database.connection.url");
 	}
+	
+	@Override
+	public String getMigrationDatabaseConnectionUrl() {
+		return configuration.getProperty("org.sagebionetworks.migration.database.connection.url");
+	}
 
 	/**
 	 * The repository database schema name.

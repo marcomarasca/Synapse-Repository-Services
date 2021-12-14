@@ -11,7 +11,7 @@
 
 	<!-- Trun on Spring's auotproxy using AspectJ's @Aspect annotations. -->
 	<aop:aspectj-autoproxy />
-
+	
 	<!-- This is serving as the JDBC connection pool -->
 	<bean id="dataSourcePool" class="org.apache.commons.dbcp2.BasicDataSource"
 		destroy-method="close" depends-on="stackConfiguration">
@@ -89,8 +89,7 @@
 		<property name="dataSource" ref="dataSourcePool" />
 	</bean>
 
-	<bean id="jdbcTemplate"
-		class="org.springframework.jdbc.core.JdbcTemplate">
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
 		<constructor-arg ref="dataSourcePool"></constructor-arg>
 	</bean>
 	
@@ -115,5 +114,76 @@
 			</bean>
 		</constructor-arg>
 	</bean>
+	
+	<!-- Configure a separate data source, tx manager for migration -->
+	
+	<!-- This is serving as the JDBC connection pool -->
+	<bean id="migrationDataSourcePool" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close" depends-on="stackConfiguration" primary="false">
+		<property name="driverClassName" ref="stackConfiguration.repositoryDatabaseDriver" />
+		<property name="url"
+			ref="stackConfiguration.migrationDatabaseConnectionUrl" />
+		<property name="username"
+			ref="stackConfiguration.repositoryDatabaseUsername" />
+		<property name="password"
+			ref="stackConfiguration.repositoryDatabasePassword" />
+		<!-- The minimum number of connections in the pool at all times -->
+		<property name="minIdle"
+			ref="stackConfiguration.databaseConnectionPoolMinNumberConnections" />
+		<!-- The maximum number of connections in the pool -->
+		<property name="maxTotal"
+			ref="stackConfiguration.databaseConnectionPoolMaxNumberConnections" />
+		<!-- This will test a connection to see if it is alive when a connection 
+			is fetched from the pool -->
+		<property name="testOnBorrow"
+			ref="stackConfiguration.databaseConnectionPoolShouldValidate" />
+		<!-- This is the SQL uses to test if a connection is alive -->
+		<property name="validationQuery"
+			ref="stackConfiguration.databaseConnectionPoolValidateSql" />
+		<!-- Default all transaction to TRANSACTION_READ_COMMITTED -->
+		<property name="defaultTransactionIsolation">
+			<util:constant static-field="java.sql.Connection.TRANSACTION_READ_COMMITTED"/>
+		</property>
+	</bean>
+	
+	<!-- Transaction Manager for migration -->
+	<bean id="migrationTxManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" primary="false">
+		<property name="dataSource" ref="migrationDataSourcePool" />
+	</bean>
+	
+	<bean id="migrationJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" primary="false">
+		<constructor-arg ref="migrationDataSourcePool"></constructor-arg>
+	</bean>
+	
+	<tx:advice id="migrationWriteTxRollbackAdvice" transaction-manager="migrationTxManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" rollback-for="Throwable" isolation="READ_COMMITTED" />
+		</tx:attributes>
+	</tx:advice>
+	<tx:advice id="migrationNewWriteTxRollbackAdvice" transaction-manager="migrationTxManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRES_NEW" rollback-for="Throwable" isolation="READ_COMMITTED" />
+		</tx:attributes>
+	</tx:advice>
+	<tx:advice id="migrationMandatoryWriteTxRollbackAdvice" transaction-manager="migrationTxManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="MANDATORY" rollback-for="Throwable" isolation="READ_COMMITTED" />
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut id="migrationWrites"
+			expression="@annotation(org.sagebionetworks.repo.transactions.WriteTransaction) **and** @annotation(org.sagebionetworks.repo.model.dbo.migration.MigrationTransaction)" />
+		<aop:advisor pointcut-ref="migrationWrites" advice-ref="migrationWriteTxRollbackAdvice" />
+	</aop:config>		
+	<aop:config>
+		<aop:pointcut id="migrationNewWrites"
+			expression="@annotation(org.sagebionetworks.repo.transactions.NewWriteTransaction) **and** @annotation(org.sagebionetworks.repo.model.dbo.migration.MigrationTransaction)" />
+		<aop:advisor pointcut-ref="migrationNewWrites" advice-ref="migrationNewWriteTxRollbackAdvice" />
+	</aop:config>
+	<aop:config>
+		<aop:pointcut id="migrationMandatoryWrites"
+					  expression="@annotation(org.sagebionetworks.repo.transactions.MandatoryWriteTransaction) **and** @annotation(org.sagebionetworks.repo.model.dbo.migration.MigrationTransaction)" />
+		<aop:advisor pointcut-ref="migrationMandatoryWrites" advice-ref="migrationMandatoryWriteTxRollbackAdvice" />
+	</aop:config>
 	
 </beans>

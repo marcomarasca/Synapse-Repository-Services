@@ -35,6 +35,7 @@ import org.sagebionetworks.repo.model.migration.TypeData;
 import org.sagebionetworks.repo.transactions.WriteTransaction;
 import org.sagebionetworks.util.ValidateArgument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -43,6 +44,8 @@ import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 /**
  * This is a generic dao like DBOBasicDao that provides data migration functions for individual tables.
@@ -77,7 +80,7 @@ public class MigratableTableDAOImpl implements MigratableTableDAO {
 	private StackConfiguration stackConfiguration;
 
 	@Autowired
-	public MigratableTableDAOImpl(JdbcTemplate jdbcTemplate, StackConfiguration stackConfiguration) {
+	public MigratableTableDAOImpl(@Qualifier("migrationJdbcTemplate") JdbcTemplate jdbcTemplate, StackConfiguration stackConfiguration) {
 		this.jdbcTemplate = jdbcTemplate;
 		this.stackConfiguration = stackConfiguration;
 	}
@@ -577,6 +580,9 @@ public class MigratableTableDAOImpl implements MigratableTableDAO {
 		if(batch.isEmpty()) {
 			return new LinkedList<>();
 		}
+		TransactionStatus status = TransactionAspectSupport.currentTransactionStatus();
+		
+		
 		// Foreign Keys must be ignored for this operation.
 		return this.runWithKeyChecksIgnored(() -> {
 			List<Long> createOrUpdateIds = new LinkedList<>();

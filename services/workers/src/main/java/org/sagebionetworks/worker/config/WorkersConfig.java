@@ -92,18 +92,18 @@ public class WorkersConfig {
 		String queueName = stackConfig.getQueueName("TABLE_ENTITY_REPLICATION");
 		MessageDrivenRunner worker = new ChangeMessageBatchProcessor(amazonSQSClient, queueName, objectReplicationWorker);
 		
+		MessageDrivenWorkerStackConfiguration config = new MessageDrivenWorkerStackConfiguration();
+		
+		config.setQueueName(queueName);
+		config.setRunner(worker);
+		config.setSemaphoreLockAndMessageVisibilityTimeoutSec(120);
+		config.setSemaphoreMaxLockCount(10);
+		config.setSemaphoreLockKey("objectReplication");
+		
+		MessageDrivenWorkerStack stack = new MessageDrivenWorkerStack(countingSemaphore, amazonSQSClient, config);
+		
 		return workerTriggerBuilder()
-			.withStack(ConcurrentWorkerStack.builder()
-				.withSemaphoreLockKey("objectReplication")
-				.withSemaphoreMaxLockCount(10)
-				.withSemaphoreLockAndMessageVisibilityTimeoutSec(120)
-				.withMaxThreadsPerMachine(5)
-				.withSingleton(concurrentStackManager)
-				.withCanRunInReadOnly(true)
-				.withQueueName(queueName)
-				.withWorker(worker)
-				.build()
-			)
+			.withStack(stack)
 			.withRepeatInterval(553)
 			.withStartDelay(15)
 			.build();
@@ -115,18 +115,18 @@ public class WorkersConfig {
 		String queueName = stackConfig.getQueueName("ENTITY_REPLICATION_RECONCILIATION");
 		MessageDrivenRunner worker = new ChangeMessageBatchProcessor(amazonSQSClient, queueName, objectReplicationReconciliationWorker);
 		
+		MessageDrivenWorkerStackConfiguration config = new MessageDrivenWorkerStackConfiguration();
+		
+		config.setQueueName(queueName);
+		config.setRunner(worker);
+		config.setSemaphoreLockAndMessageVisibilityTimeoutSec(60);
+		config.setSemaphoreMaxLockCount(10);
+		config.setSemaphoreLockKey("objectReplicationReconciliationWorker");
+		
+		MessageDrivenWorkerStack stack = new MessageDrivenWorkerStack(countingSemaphore, amazonSQSClient, config);
+		
 		return workerTriggerBuilder()
-			.withStack(ConcurrentWorkerStack.builder()
-				.withSemaphoreLockKey("objectReplicationReconciliationWorker")
-				.withSemaphoreMaxLockCount(10)
-				.withSemaphoreLockAndMessageVisibilityTimeoutSec(60)
-				.withMaxThreadsPerMachine(5)
-				.withSingleton(concurrentStackManager)
-				.withCanRunInReadOnly(false)
-				.withQueueName(queueName)
-				.withWorker(worker)
-				.build()
-			)
+			.withStack(stack)
 			.withRepeatInterval(2034)
 			.withStartDelay(17)
 			.build();
@@ -138,18 +138,18 @@ public class WorkersConfig {
 		String queueName = stackConfig.getQueueName("TABLE_UPDATE");
 		MessageDrivenRunner worker = new ChangeMessageBatchProcessor(amazonSQSClient, queueName, tableIndexWorker);
 		
+		MessageDrivenWorkerStackConfiguration config = new MessageDrivenWorkerStackConfiguration();
+		
+		config.setQueueName(queueName);
+		config.setRunner(worker);
+		config.setSemaphoreLockAndMessageVisibilityTimeoutSec(1200);
+		config.setSemaphoreMaxLockCount(10);
+		config.setSemaphoreLockKey("tableIndexWorker");
+		
+		MessageDrivenWorkerStack stack = new MessageDrivenWorkerStack(countingSemaphore, amazonSQSClient, config);
+		
 		return workerTriggerBuilder()
-			.withStack(ConcurrentWorkerStack.builder()
-				.withSemaphoreLockKey("tableIndexWorker")
-				.withSemaphoreMaxLockCount(10)
-				.withSemaphoreLockAndMessageVisibilityTimeoutSec(1200)
-				.withMaxThreadsPerMachine(3)
-				.withSingleton(concurrentStackManager)
-				.withCanRunInReadOnly(true)
-				.withQueueName(queueName)
-				.withWorker(worker)
-				.build()
-			)
+			.withStack(stack)
 			.withRepeatInterval(1797)
 			.withStartDelay(256)
 			.build();
@@ -161,18 +161,18 @@ public class WorkersConfig {
 		String queueName = stackConfig.getQueueName("TABLE_VIEW");
 		MessageDrivenRunner worker = new ChangeMessageBatchProcessor(amazonSQSClient, queueName, tableViewWorker);
 		
+		MessageDrivenWorkerStackConfiguration config = new MessageDrivenWorkerStackConfiguration();
+		
+		config.setQueueName(queueName);
+		config.setRunner(worker);
+		config.setSemaphoreLockAndMessageVisibilityTimeoutSec(120);
+		config.setSemaphoreMaxLockCount(10);
+		config.setSemaphoreLockKey("tableViewWorker");
+		
+		MessageDrivenWorkerStack stack = new MessageDrivenWorkerStack(countingSemaphore, amazonSQSClient, config);
+		
 		return workerTriggerBuilder()
-			.withStack(ConcurrentWorkerStack.builder()
-				.withSemaphoreLockKey("tableViewWorker")
-				.withSemaphoreMaxLockCount(10)
-				.withSemaphoreLockAndMessageVisibilityTimeoutSec(120)
-				.withMaxThreadsPerMachine(3)
-				.withSingleton(concurrentStackManager)
-				.withCanRunInReadOnly(true)
-				.withQueueName(queueName)
-				.withWorker(worker)
-				.build()
-			)
+			.withStack(stack)
 			.withRepeatInterval(750)
 			.withStartDelay(253)
 			.build();
@@ -184,18 +184,18 @@ public class WorkersConfig {
 		String queueName = stackConfig.getQueueName("MATERIALIZED_VIEW_UPDATE");
 		MessageDrivenRunner worker = new ChangeMessageBatchProcessor(amazonSQSClient, queueName, materializedViewUpdateWorker);
 		
+		MessageDrivenWorkerStackConfiguration config = new MessageDrivenWorkerStackConfiguration();
+		
+		config.setQueueName(queueName);
+		config.setRunner(worker);
+		config.setSemaphoreLockAndMessageVisibilityTimeoutSec(120);
+		config.setSemaphoreMaxLockCount(10);
+		config.setSemaphoreLockKey("materializedViewUpdate");
+		
+		MessageDrivenWorkerStack stack = new MessageDrivenWorkerStack(countingSemaphore, amazonSQSClient, config);
+		
 		return workerTriggerBuilder()
-			.withStack(ConcurrentWorkerStack.builder()
-				.withSemaphoreLockKey("materializedViewUpdate")
-				.withSemaphoreMaxLockCount(10)
-				.withSemaphoreLockAndMessageVisibilityTimeoutSec(120)
-				.withMaxThreadsPerMachine(3)
-				.withSingleton(concurrentStackManager)
-				.withCanRunInReadOnly(true)
-				.withQueueName(queueName)
-				.withWorker(worker)
-				.build()
-			)
+			.withStack(stack)
 			.withRepeatInterval(750)
 			.withStartDelay(253)
 			.build();
@@ -207,64 +207,66 @@ public class WorkersConfig {
 		String queueName = stackConfig.getQueueName("MATERIALIZED_VIEW_SOURCE_UPDATE");
 		MessageDrivenRunner worker = new TypedMessageDrivenRunnerAdapter<>(objectMapper, materializedViewSourceUpdateWorker);
 		
+		MessageDrivenWorkerStackConfiguration config = new MessageDrivenWorkerStackConfiguration();
+		
+		config.setQueueName(queueName);
+		config.setRunner(worker);
+		config.setSemaphoreLockAndMessageVisibilityTimeoutSec(30);
+		config.setSemaphoreMaxLockCount(10);
+		config.setSemaphoreLockKey("materializedViewSourceUpdateWorker");
+		
+		MessageDrivenWorkerStack stack = new MessageDrivenWorkerStack(countingSemaphore, amazonSQSClient, config);
+		
 		return workerTriggerBuilder()
-			.withStack(ConcurrentWorkerStack.builder()
-			.withSemaphoreLockKey("materializedViewSourceUpdateWorker")
-			.withSemaphoreMaxLockCount(10)
-			.withSemaphoreLockAndMessageVisibilityTimeoutSec(30)
-			.withMaxThreadsPerMachine(2)
-			.withSingleton(concurrentStackManager)
-			.withCanRunInReadOnly(true)
-			.withQueueName(queueName)
-			.withWorker(worker)
-			.build()
-		)
-		.withRepeatInterval(934)
-		.withStartDelay(578)
-		.build();
+			.withStack(stack)
+			.withRepeatInterval(934)
+			.withStartDelay(578)
+			.build();
 	}
 	
 	@Bean
-	public SimpleTriggerFactoryBean tableQueryTrigger(ConcurrentManager concurrentStackManager, TableQueryWorker tableQueryWorker) {
+	public SimpleTriggerFactoryBean tableQueryTrigger(ConcurrentManager concurrentStackManager, StackStatusGate stackStatusGate, TableQueryWorker tableQueryWorker) {
 		
 		String queueName = stackConfig.getQueueName("QUERY");		
 		MessageDrivenRunner worker = new AsyncJobRunnerAdapter<>(jobStatusManager, userManager, tableQueryWorker);
 		
+		MessageDrivenWorkerStackConfiguration config = new MessageDrivenWorkerStackConfiguration();
+		
+		config.setQueueName(queueName);
+		config.setRunner(worker);
+		config.setSemaphoreLockAndMessageVisibilityTimeoutSec(120);
+		config.setSemaphoreMaxLockCount(10);
+		config.setSemaphoreLockKey("tableQueryWorker");
+		config.setGate(stackStatusGate);
+		
+		MessageDrivenWorkerStack stack = new MessageDrivenWorkerStack(countingSemaphore, amazonSQSClient, config);
+		
 		return workerTriggerBuilder()
-			.withStack(ConcurrentWorkerStack.builder()
-				.withSemaphoreLockKey("tableQueryWorker")
-				.withSemaphoreMaxLockCount(10)
-				.withSemaphoreLockAndMessageVisibilityTimeoutSec(120)
-				.withMaxThreadsPerMachine(3)
-				.withSingleton(concurrentStackManager)
-				.withCanRunInReadOnly(false)
-				.withQueueName(queueName)
-				.withWorker(worker)
-				.build()
-			)
+			.withStack(stack)
 			.withRepeatInterval(2187)
 			.withStartDelay(1025)
 			.build();
 	}
 	
 	@Bean
-	public SimpleTriggerFactoryBean tableQueryNextPageTrigger(ConcurrentManager concurrentStackManager, TableQueryNextPageWorker tableQueryNextPageWorker) {
+	public SimpleTriggerFactoryBean tableQueryNextPageTrigger(ConcurrentManager concurrentStackManager, StackStatusGate stackStatusGate, TableQueryNextPageWorker tableQueryNextPageWorker) {
 		
 		String queueName = stackConfig.getQueueName("QUERY_NEXT_PAGE");		
 		MessageDrivenRunner worker = new AsyncJobRunnerAdapter<>(jobStatusManager, userManager, tableQueryNextPageWorker);
 		
+		MessageDrivenWorkerStackConfiguration config = new MessageDrivenWorkerStackConfiguration();
+		
+		config.setQueueName(queueName);
+		config.setRunner(worker);
+		config.setSemaphoreLockAndMessageVisibilityTimeoutSec(120);
+		config.setSemaphoreMaxLockCount(10);
+		config.setSemaphoreLockKey("tableQueryNextPageWorker");
+		config.setGate(stackStatusGate);
+		
+		MessageDrivenWorkerStack stack = new MessageDrivenWorkerStack(countingSemaphore, amazonSQSClient, config);
+		
 		return workerTriggerBuilder()
-			.withStack(ConcurrentWorkerStack.builder()
-				.withSemaphoreLockKey("tableQueryNextPageWorker")
-				.withSemaphoreMaxLockCount(10)
-				.withSemaphoreLockAndMessageVisibilityTimeoutSec(120)
-				.withMaxThreadsPerMachine(3)
-				.withSingleton(concurrentStackManager)
-				.withCanRunInReadOnly(false)
-				.withQueueName(queueName)
-				.withWorker(worker)
-				.build()
-			)
+			.withStack(stack)
 			.withRepeatInterval(2180)
 			.withStartDelay(1024)
 			.build();

@@ -2263,4 +2263,26 @@ public class QueryTranslatorTest {
 		
 		assertEquals(List.of(new SelectColumn().setName("j").setColumnType(ColumnType.JSON)), select);
 	}
+	
+	@Test
+	public void testSelectWithJsonExtract() {
+		IdAndVersion tableId = IdAndVersion.parse("syn1");
+		when(mockSchemaProvider.getTableSchema(tableId)).thenReturn(List.of(columnNameToModelMap.get("foo"), columnNameToModelMap.get("bar")));
+		
+		IndexDescription indexDescription = new TableIndexDescription(tableId);
+
+		sql = "select JSON_EXTRACT(foo, '$[0]') as j from syn1";
+		
+		QueryTranslator query = QueryTranslator.builder(sql, userId)
+			.schemaProvider(mockSchemaProvider)
+			.sqlContext(SqlContext.query)
+			.indexDescription(indexDescription).build();
+		
+		assertEquals("SELECT JSON_EXTRACT(_C111_,'$[0]') AS j, ROW_ID, ROW_VERSION FROM T1", query.getOutputSQL());
+		
+		List<SelectColumn> select = query.getSelectColumns();
+		
+		assertEquals(List.of(new SelectColumn().setName("j").setColumnType(ColumnType.STRING)), select);
+	}
+	
 }

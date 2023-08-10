@@ -593,7 +593,7 @@ public class SQLTranslatorUtils {
 				
 				// The reference to the unnested column reference in the secondary index
 				String unnestedColumnRef = 
-					SQLUtils.getTableNameForMultiValueColumnIndex(tableIdRef, columnTranslationReference.getId()) 
+					SQLUtils.getJsonTableNameForMultiValueColumnIndex(tableIdRef, columnTranslationReference.getId()) 
 						+ "." +
 					SQLUtils.getUnnestedColumnNameForId(columnTranslationReference.getId());
 				
@@ -621,7 +621,7 @@ public class SQLTranslatorUtils {
 			
 			// When we have multiple tables (join) we reference them by a generated alias
 			String mainTableName = mapper.getNumberOfTables() > 1 ? columnMatch.getTableInfo().getTranslatedTableAlias() : columnMatch.getTableInfo().getTranslatedTableName();
-			String joinTableName = SQLUtils.getTableNameForMultiValueColumnIndex(referencedTable, columnReference.getId());
+			String joinTableName = SQLUtils.getJsonTableNameForMultiValueColumnIndex(referencedTable, columnReference.getId());
 			
 			ColumnReference joinColumnReference = SqlElementUtils.createColumnReference(mainTableName + "." + columnMatch.getColumnTranslationReference().getTranslatedColumnName());
 			

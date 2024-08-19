@@ -26,6 +26,7 @@ import org.sagebionetworks.repo.model.migration.MigrationType;
 public class DBOWebhookVerification implements MigratableDatabaseObject<DBOWebhookVerification, DBOWebhookVerification> {
 
 	private Long webhookId;
+	private Long oldVerificationId;
 	private String etag;
 	private Timestamp modifiedOn;
 	private String code;
@@ -34,6 +35,8 @@ public class DBOWebhookVerification implements MigratableDatabaseObject<DBOWebho
 	private String message;
 
 	private static FieldColumn[] FIELDS = new FieldColumn[] {
+		// See https://sagebionetworks.jira.com/browse/PLFM-8539, this is unused but we need it to perform migration
+		new FieldColumn("oldVerificationId", "VERIFICATION_ID"),
 		new FieldColumn("webhookId", COL_WEBHOOK_VERIFICATION_ID, true).withIsBackupId(true),
 		new FieldColumn("etag", COL_WEBHOOK_VERIFICATION_ETAG).withIsEtag(true),
 		new FieldColumn("modifiedOn", COL_WEBHOOK_VERIFICATION_MODIFIED_ON),
@@ -113,6 +116,14 @@ public class DBOWebhookVerification implements MigratableDatabaseObject<DBOWebho
 	public DBOWebhookVerification setWebhookId(Long webhookId) {
 		this.webhookId = webhookId;
 		return this;
+	}
+	
+	public Long getOldVerificationId() {
+		return oldVerificationId;
+	}
+	
+	public void setOldVerificationId(Long oldVerificationId) {
+		this.oldVerificationId = oldVerificationId;
 	}
 
 	public String getEtag() {

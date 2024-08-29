@@ -334,7 +334,7 @@ public class ConcurrentManagerImplTest {
 		assertEquals(Collections.emptyList(), jobs);
 
 		verify(mockAmazonSQSClient).receiveMessage(new ReceiveMessageRequest().withQueueUrl(queueUrl)
-				.withWaitTimeSeconds(0).withMaxNumberOfMessages(maxThreadCount).withVisibilityTimeout(lockTimeoutSec));
+				.withWaitTimeSeconds(2).withMaxNumberOfMessages(maxThreadCount).withVisibilityTimeout(lockTimeoutSec));
 
 		verify(manager, never()).startWorkerJob(any(), anyInt(), any(), any());
 	}
@@ -353,7 +353,7 @@ public class ConcurrentManagerImplTest {
 
 		verify(mockAmazonSQSClient).receiveMessage(new ReceiveMessageRequest()
 			.withQueueUrl(queueUrl)
-			.withWaitTimeSeconds(0)
+			.withWaitTimeSeconds(2)
 			.withMaxNumberOfMessages(maxThreadCount)
 			.withVisibilityTimeout(lockTimeoutSec)
 			.withMessageAttributeNames("All")
@@ -379,7 +379,7 @@ public class ConcurrentManagerImplTest {
 		assertEquals(2, jobs.size());
 
 		verify(mockAmazonSQSClient).receiveMessage(new ReceiveMessageRequest().withQueueUrl(queueUrl)
-				.withWaitTimeSeconds(0).withMaxNumberOfMessages(maxThreadCount).withVisibilityTimeout(lockTimeoutSec));
+				.withWaitTimeSeconds(2).withMaxNumberOfMessages(maxThreadCount).withVisibilityTimeout(lockTimeoutSec));
 
 		verify(manager, times(2)).startWorkerJob(any(), anyInt(), any(), any());
 		verify(manager).startWorkerJob(queueUrl, lockTimeoutSec, mockWorker, messages.get(0));

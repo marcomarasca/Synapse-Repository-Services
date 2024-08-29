@@ -155,7 +155,7 @@ public class PollingMessageReceiverImpl implements ProgressingRunner {
 		// NOTE: it is very important that setWaitTimeSeconds is kept at 0. Otherwise,
 		// the call will wait by holding on to a connection the connection pool,
 		// thus preventing other worker threads from checking for messages until this thread receives a message.
-		request.setWaitTimeSeconds(0);
+		request.setWaitTimeSeconds(2);
 		
 		if (runner.getMessageAttributeNames() != null && !runner.getMessageAttributeNames().isEmpty()) {
 			request.withMessageAttributeNames(runner.getMessageAttributeNames());

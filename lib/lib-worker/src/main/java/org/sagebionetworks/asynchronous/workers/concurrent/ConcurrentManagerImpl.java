@@ -118,7 +118,7 @@ public class ConcurrentManagerImpl implements ConcurrentManager {
 
 		ReceiveMessageRequest request = new ReceiveMessageRequest()
 			.withQueueUrl(queueUrl)
-			.withWaitTimeSeconds(0)
+			.withWaitTimeSeconds(2)
 			.withMaxNumberOfMessages(maxNumberOfMessages)
 			.withVisibilityTimeout(messageVisibilityTimeoutSec); 
 		

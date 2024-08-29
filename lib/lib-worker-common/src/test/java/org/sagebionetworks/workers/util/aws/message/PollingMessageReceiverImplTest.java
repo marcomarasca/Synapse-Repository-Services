@@ -345,7 +345,7 @@ public class PollingMessageReceiverImplTest {
 			.withMessageSystemAttributeNames(Arrays.asList(MessageSystemAttributeName.ApproximateReceiveCount.toString()))
 			.withMaxNumberOfMessages(1)
 			.withVisibilityTimeout(messageVisibilityTimeoutSec)
-			.withWaitTimeSeconds(0)
+			.withWaitTimeSeconds(2)
 			.withQueueUrl(queueUrl);
 		
 		//since receiver.run() uses a do/while loop. we've done work for numInvocations("progressCallback.runnerShouldTerminate()") + 1 times
@@ -378,7 +378,7 @@ public class PollingMessageReceiverImplTest {
 			.withMessageAttributeNames("All")
 			.withMaxNumberOfMessages(1)
 			.withVisibilityTimeout(messageVisibilityTimeoutSec)
-			.withWaitTimeSeconds(0)
+			.withWaitTimeSeconds(2)
 			.withQueueUrl(queueUrl)
 		);
 		verify(mockAmazonSQSClient).deleteMessage(new DeleteMessageRequest()

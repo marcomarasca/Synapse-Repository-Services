@@ -22,6 +22,7 @@ import static org.sagebionetworks.repo.model.table.TableConstants.OBJECT_REPLICA
 import static org.sagebionetworks.repo.model.table.TableConstants.OBJECT_REPLICATION_COL_FILE_BUCKET;
 import static org.sagebionetworks.repo.model.table.TableConstants.OBJECT_REPLICATION_COL_FILE_CONCRETE_TYPE;
 import static org.sagebionetworks.repo.model.table.TableConstants.OBJECT_REPLICATION_COL_FILE_ID;
+import static org.sagebionetworks.repo.model.table.TableConstants.OBJECT_REPLICATION_COL_FILE_LOCATION_ID;
 import static org.sagebionetworks.repo.model.table.TableConstants.OBJECT_REPLICATION_COL_FILE_KEY;
 import static org.sagebionetworks.repo.model.table.TableConstants.OBJECT_REPLICATION_COL_FILE_MD5;
 import static org.sagebionetworks.repo.model.table.TableConstants.OBJECT_REPLICATION_COL_FILE_NAME;
@@ -172,6 +173,10 @@ public class TableIndexDAOImpl implements TableIndexDAO {
 		dto.setFileHandleId(rs.getLong(OBJECT_REPLICATION_COL_FILE_ID));
 		if (rs.wasNull()) {
 			dto.setFileHandleId(null);
+		}
+		dto.setFileLocationId(rs.getLong(OBJECT_REPLICATION_COL_FILE_LOCATION_ID));
+		if (rs.wasNull()) {
+			dto.setFileLocationId(null);
 		}
 		dto.setFileSizeBytes(rs.getLong(OBJECT_REPLICATION_COL_FILE_SIZE_BYTES));
 		if (rs.wasNull()) {
@@ -786,7 +791,7 @@ public class TableIndexDAOImpl implements TableIndexDAO {
 					throws SQLException {
 				ObjectDataDTO dto = sorted.get(i);
 				int parameterIndex = 1;
-				int updateOffset = 22;
+				int updateOffset = 23;
 				
 				ps.setString(parameterIndex++, mainType.name());
 				ps.setLong(parameterIndex++, dto.getId());
@@ -852,7 +857,14 @@ public class TableIndexDAOImpl implements TableIndexDAO {
 				}else{
 					ps.setNull(parameterIndex++, java.sql.Types.BIGINT);
 					ps.setNull(parameterIndex + updateOffset, java.sql.Types.BIGINT);
-				}
+				}				
+				if(dto.getFileLocationId() != null){
+					ps.setLong(parameterIndex++, dto.getFileLocationId());
+					ps.setLong(parameterIndex + updateOffset, dto.getFileLocationId());
+				}else{
+					ps.setNull(parameterIndex++, java.sql.Types.BIGINT);
+					ps.setNull(parameterIndex + updateOffset, java.sql.Types.BIGINT);
+				}				
 				if(dto.getFileSizeBytes() != null) {
 					ps.setLong(parameterIndex++, dto.getFileSizeBytes());
 					ps.setLong(parameterIndex + updateOffset, dto.getFileSizeBytes());

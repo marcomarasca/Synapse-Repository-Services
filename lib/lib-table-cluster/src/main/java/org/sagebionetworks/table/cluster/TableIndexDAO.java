@@ -647,6 +647,10 @@ public interface TableIndexDAO {
 	 */
 	Optional<CachedQueryDto> getCachedQuery(String requestHash);
 	
-	Map<String, Long> getProjectStorageLocationUsage(long projectId);
+	/**
+	 * @param projectId
+	 * @return A map between the storage location and its total file size in bytes for the project with the given id
+	 */
+	Map<String, Long> getProjectStorageUsageData(long projectId);
 
 }

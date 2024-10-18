@@ -161,6 +161,9 @@
 		
 		<!-- TOS -->
 		<ref bean="tosLatestVersionRefreshWorkerTrigger"/>
+		
+		<!-- Refresh project storage cache data -->
+		<ref bean="projectStorageCacheWorkerTrigger"/>
 	</util:list>
 
 	<bean id="mainScheduler"

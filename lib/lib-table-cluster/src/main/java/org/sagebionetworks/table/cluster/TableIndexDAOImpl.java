@@ -1655,11 +1655,11 @@ public class TableIndexDAOImpl implements TableIndexDAO {
 	}
 	
 	@Override
-	public Map<String, Long> getProjectStorageLocationUsage(long projectId) {
-		String sql = "SELECT " + OBJECT_REPLICATION_COL_FILE_LOCATION_ID + ", SUM(" + OBJECT_REPLICATION_COL_FILE_SIZE_BYTES + ") AS TOTAL_BYTES"
-			+ " FROM " + OBJECT_REPLICATION_TABLE + " WHERE " + OBJECT_REPLICATION_COL_PROJECT_ID + "=? AND"
-			+ OBJECT_REPLICATION_COL_FILE_LOCATION_ID + " IS NOT NULL"
-			+ " GROUP BY " + OBJECT_REPLICATION_COL_FILE_LOCATION_ID;
+	public Map<String, Long> getProjectStorageUsageData(long projectId) {
+		String sql = "SELECT " + OBJECT_REPLICATION_COL_FILE_LOCATION_ID + ", SUM(" + OBJECT_REPLICATION_COL_FILE_SIZE_BYTES + ") AS TOTAL_BYTES "
+			+ "FROM " + OBJECT_REPLICATION_TABLE + " WHERE " + OBJECT_REPLICATION_COL_PROJECT_ID + "=? AND "
+			+ OBJECT_REPLICATION_COL_FILE_LOCATION_ID + " IS NOT NULL "
+			+ "GROUP BY " + OBJECT_REPLICATION_COL_FILE_LOCATION_ID;
 		
 		Map<String, Long> storageMap = new HashMap<>();
 		

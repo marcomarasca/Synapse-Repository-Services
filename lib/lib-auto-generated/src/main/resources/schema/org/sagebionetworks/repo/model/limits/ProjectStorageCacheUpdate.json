@@ -1,0 +1,6 @@
+{
+    "description": "Message used to refresh the project storage cache",
+    "implements": [
+    	{"$ref": "org.sagebionetworks.repo.model.message.LocalStackMessage"}
+    ]
+}

@@ -1,4 +1,4 @@
-package org.sagebionetworks.repo.model.dbo.statistics;
+package org.sagebionetworks.repo.model.dbo.limits;
 
 import static org.sagebionetworks.repo.model.query.jdo.SqlConstants.COL_PROJECT_STORAGE_USAGE_LOCATION_DATA;
 import static org.sagebionetworks.repo.model.query.jdo.SqlConstants.COL_PROJECT_STORAGE_USAGE_PROJECT_ID;
@@ -9,7 +9,6 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 import org.json.JSONObject;
 import org.sagebionetworks.repo.transactions.WriteTransaction;

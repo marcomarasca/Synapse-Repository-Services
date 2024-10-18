@@ -1,4 +1,4 @@
-package org.sagebionetworks.repo.model.dbo.statistics;
+package org.sagebionetworks.repo.model.dbo.limits;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

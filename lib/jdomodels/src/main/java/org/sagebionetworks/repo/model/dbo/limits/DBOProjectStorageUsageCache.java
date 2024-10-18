@@ -1,4 +1,4 @@
-package org.sagebionetworks.repo.model.dbo.statistics;
+package org.sagebionetworks.repo.model.dbo.limits;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

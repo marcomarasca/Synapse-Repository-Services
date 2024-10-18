@@ -168,7 +168,7 @@ public class TableIndexDAOImplTest {
 		if (tableId != null && tableIndexDAO != null) {
 			tableIndexDAO.deleteTable(tableId);
 		}
-		tableIndexDAO.truncateIndex();
+		//tableIndexDAO.truncateIndex();
 	}
 	
 	/**
@@ -5194,6 +5194,28 @@ public class TableIndexDAOImplTest {
 		}).getMessage();
 		
 		assertTrue(message.contains("Data too long for column 'PATH'"));
+	}
+	
+	@Test
+	public void testGetProjectStorageLocationData() {
+		long projectOneId = 123;
+		long projectTwoId = 456;
+		
+		tableIndexDAO.addObjectData(ReplicationType.ENTITY, List.of(
+			createObjectDataDTO(projectOneId, EntityType.project, 0),
+			createObjectDataDTO(2L, EntityType.folder, 0).setProjectId(projectOneId),
+			createObjectDataDTO(3L, EntityType.file, 0).setProjectId(projectOneId).setFileSizeBytes(1024L).setFileLocationId(1L),
+			createObjectDataDTO(4L, EntityType.file, 0).setProjectId(projectOneId).setFileSizeBytes(2048L).setFileLocationId(2L),
+			createObjectDataDTO(5L, EntityType.file, 0).setProjectId(projectOneId).setFileSizeBytes(1024L).setFileLocationId(2L),
+			createObjectDataDTO(6L, EntityType.dataset, 0).setProjectId(projectOneId),
+			// Data for another project
+			createObjectDataDTO(projectTwoId, EntityType.project, 0),
+			createObjectDataDTO(7, EntityType.file, 0).setProjectId(projectTwoId).setFileSizeBytes(4096L).setFileLocationId(1L)
+		));
+		
+		// Call under test
+		assertEquals(Map.of("1", 1024L, "2", 3072L), tableIndexDAO.getProjectStorageUsageData(projectOneId));
+		assertEquals(Map.of("1", 4096L), tableIndexDAO.getProjectStorageUsageData(projectTwoId));
 	}
 	
 }

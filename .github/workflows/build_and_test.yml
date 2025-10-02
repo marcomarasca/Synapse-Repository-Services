@@ -136,7 +136,8 @@ jobs:
           /repos/Sage-Bionetworks/Synapse-Repository-Services/statuses/${{ github.sha }} \
           -f "state=pending" \
           -f "description=Build in Progress" \
-          -f "target_url=${{ env.PIPELINE_CONSOLE_URL }}"
+          -f "target_url=${{ env.PIPELINE_CONSOLE_URL }}" \
+		  -f "context=build/codepipeline"
 
       - name: Trigger CodePipeline
         id: pipeline-run
@@ -177,7 +178,8 @@ jobs:
           /repos/Sage-Bionetworks/Synapse-Repository-Services/statuses/${{ github.sha }} \
           -f "state=success" \
           -f "description=Build Succeeded" \
-          -f "target_url=${{ env.PIPELINE_CONSOLE_URL }}"
+		  -f "target_url=${{ env.PIPELINE_CONSOLE_URL }}" \
+  		  -f "context=build/codepipeline"
 
       - name: Failed Status
         if: ${{ env.WRITE_STATUS_TOKEN_EXISTS && failure()}}
@@ -188,7 +190,8 @@ jobs:
           /repos/Sage-Bionetworks/Synapse-Repository-Services/statuses/${{ github.sha }} \
           -f "state=failure" \
           -f "description=Build Failed" \
-          -f "target_url=${{ env.PIPELINE_CONSOLE_URL }}"
+		  -f "target_url=${{ env.PIPELINE_CONSOLE_URL }}" \
+  		  -f "context=build/codepipeline"
 
       - name: Cancelled Status
         if: ${{ env.WRITE_STATUS_TOKEN_EXISTS && cancelled()}}
@@ -199,7 +202,8 @@ jobs:
           /repos/Sage-Bionetworks/Synapse-Repository-Services/statuses/${{ github.sha }} \
           -f "state=failure" \
           -f "description=Build Cancelled" \
-          -f "target_url=${{ env.PIPELINE_CONSOLE_URL }}"
+          -f "target_url=${{ env.PIPELINE_CONSOLE_URL }}" \
+		  -f "context=build/codepipeline"
 
       - name: Stop CodePipeline on Workflow Cancellation
         if: cancelled()
